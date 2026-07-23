@@ -73,7 +73,7 @@ export default function About() {
               دەربارەی <span className="gold-text">{STORE.nameKu}</span>
             </h2>
             <p className="text-white/70 leading-relaxed mb-5 text-lg">
-              دوکانی {STORE.nameKu} زیاتر لە ٢٠ ساڵە لە بواری زێر و جوانکاری لە کوردستان کار دەکات.
+              دوکانی {STORE.nameKu} زیاتر لە ٥٠ ساڵە لە بواری زێر و جوانکاری لە کوردستان کار دەکات.
               ئێمە بە کوالێتی بەرزترین زێر و زیو و ئەڵماس پێشکەش دەکەین.
             </p>
             <p className="text-white/70 leading-relaxed mb-8">
