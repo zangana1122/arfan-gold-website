@@ -57,9 +57,9 @@ function toNum(v: any): number {
   return isNaN(n) ? 0 : n;
 }
 
-function getPriceBreakdown(p: ProductWithPrice) {
+function getPriceBreakdown(p: ProductWithPrice, liveRatePerGram?: number) {
   const weight = parseWeight(p.weight);
-  const ppGram = toNum(p.pricePerGram);
+  const ppGram = liveRatePerGram ?? toNum(p.pricePerGram);
   const mFee = toNum(p.makingFee);
   const fixed = toNum(p.price);
   const feeType = p.makingFeeType || "per_gram";
@@ -92,14 +92,22 @@ function getPriceBreakdown(p: ProductWithPrice) {
 
 
 
+function liveRateFor(karat: string | null | undefined, goldRates?: Record<string, number>): number | undefined {
+  if (!karat || !goldRates) return undefined;
+  const rate = goldRates[`gold_rate_${karat}`];
+  return rate && rate > 0 ? rate : undefined;
+}
+
 export default function ProductsSection({
   initialProducts,
   controlledCategory,
   onCategoryChange,
+  goldRates,
 }: {
   initialProducts: Product[];
   controlledCategory?: string;
   onCategoryChange?: (c: string) => void;
+  goldRates?: Record<string, number>;
 }) {
   const [internalFilter, setInternalFilter] = useState<string>("all");
   const activeFilter = controlledCategory ?? internalFilter;
@@ -236,7 +244,7 @@ export default function ProductsSection({
 
                     {/* Price block - prominent */}
                     {(() => {
-                      const b = getPriceBreakdown(product as ProductWithPrice);
+                      const b = getPriceBreakdown(product as ProductWithPrice, liveRateFor(product.karat, goldRates));
                       if (b.total > 0) {
                         return (
                           <div className="bg-gradient-to-l from-[#faf7f2] to-[#f5eedd] border border-[#c9a961]/30 rounded-xl px-3 py-2.5 mb-3">
@@ -358,7 +366,7 @@ export default function ProductsSection({
                   </div>
                 )}
                 {(() => {
-                  const b = getPriceBreakdown(selectedProduct as ProductWithPrice);
+                  const b = getPriceBreakdown(selectedProduct as ProductWithPrice, liveRateFor(selectedProduct.karat, goldRates));
                   return (
                     <>
                       {b.hasPerGram && (
