@@ -60,7 +60,7 @@ export default function Hero() {
           {/* Stats */}
           <div className="mt-20 grid grid-cols-3 gap-6 max-w-2xl mx-auto">
             {[
-              { num: "٢٠+", label: "ساڵ ئەزموون" },
+              { num: "٥٠+", label: "ساڵ ئەزموون" },
               { num: "+٥٠٠", label: "بەرهەمی ناوازە" },
               { num: "١٠٠٪", label: "دڵنیایی کوالێتی" },
             ].map((stat, i) => (
