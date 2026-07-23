@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Product } from "@/db/schema";
@@ -71,6 +71,49 @@ export default function AdminPanel({ initialProducts }: { initialProducts: Produ
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [filterCategory, setFilterCategory] = useState("all");
   const [uploadingImg, setUploadingImg] = useState(false);
+
+  const [goldRates, setGoldRates] = useState<{ gold_rate_18: string; gold_rate_21: string; gold_rate_24: string }>({
+    gold_rate_18: "",
+    gold_rate_21: "",
+    gold_rate_24: "",
+  });
+  const [savingRates, setSavingRates] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        const rates = data.rates || {};
+        setGoldRates({
+          gold_rate_18: rates.gold_rate_18 ? String(rates.gold_rate_18) : "",
+          gold_rate_21: rates.gold_rate_21 ? String(rates.gold_rate_21) : "",
+          gold_rate_24: rates.gold_rate_24 ? String(rates.gold_rate_24) : "",
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  async function handleSaveRates(e: FormEvent) {
+    e.preventDefault();
+    setSavingRates(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(goldRates),
+      });
+      if (res.ok) {
+        setMessage({ type: "success", text: "نرخی زێر نوێکرایەوە بۆ هەموو بەرهەمەکان" });
+        setTimeout(() => setMessage(null), 2500);
+      } else {
+        setMessage({ type: "error", text: "کێشە هەبوو لە نوێکردنەوەی نرخ" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "کێشە هەبوو لە نوێکردنەوەی نرخ" });
+    } finally {
+      setSavingRates(false);
+    }
+  }
 
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -240,6 +283,55 @@ export default function AdminPanel({ initialProducts }: { initialProducts: Produ
             {message.text}
           </div>
         )}
+
+        {/* Live Gold Rate Panel */}
+        <div className="bg-white rounded-2xl shadow-lg border border-[#c9a961]/30 p-6 md:p-8 mb-8">
+          <h2 className="text-xl font-display font-bold text-[#1a1410] mb-2 flex items-center gap-2">
+            <span className="gold-text">💰</span> نرخی ئەمڕۆی زێر بۆ گرام (دۆلار)
+          </h2>
+          <p className="text-sm text-[#2a2119]/60 mb-5">
+            ئەم نرخانە بە شێوەیەکی خۆکار بۆ هەموو ئەو بەرهەمانە بەکاردێت کە هەمان عەیاریان هەیە. تەنها ئەمانە نوێ بکەرەوە هەموو ڕۆژێک بەپێی نرخی بازاڕ.
+          </p>
+          <form onSubmit={handleSaveRates} className="grid sm:grid-cols-3 gap-4">
+            <Field label="١٨ عەیار">
+              <input
+                type="number"
+                step="0.01"
+                value={goldRates.gold_rate_18}
+                onChange={(e) => setGoldRates((r) => ({ ...r, gold_rate_18: e.target.value }))}
+                placeholder="بۆ نموونە 80.00"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#c9a961]/30 focus:border-[#c9a961] outline-none"
+              />
+            </Field>
+            <Field label="٢١ عەیار">
+              <input
+                type="number"
+                step="0.01"
+                value={goldRates.gold_rate_21}
+                onChange={(e) => setGoldRates((r) => ({ ...r, gold_rate_21: e.target.value }))}
+                placeholder="بۆ نموونە 92.00"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#c9a961]/30 focus:border-[#c9a961] outline-none"
+              />
+            </Field>
+            <Field label="٢٤ عەیار">
+              <input
+                type="number"
+                step="0.01"
+                value={goldRates.gold_rate_24}
+                onChange={(e) => setGoldRates((r) => ({ ...r, gold_rate_24: e.target.value }))}
+                placeholder="بۆ نموونە 110.00"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#c9a961]/30 focus:border-[#c9a961] outline-none"
+              />
+            </Field>
+            <button
+              type="submit"
+              disabled={savingRates}
+              className="sm:col-span-3 gold-btn py-3 rounded-xl font-semibold disabled:opacity-60"
+            >
+              {savingRates ? "نوێکردنەوە..." : "نوێکردنەوەی نرخی زێر بۆ هەموو بەرهەمەکان"}
+            </button>
+          </form>
+        </div>
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-lg border border-[#c9a961]/20 p-6 md:p-8 mb-8">
