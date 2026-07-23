@@ -14,10 +14,6 @@ export const dynamic = "force-dynamic";
 
 async function getProducts() {
   try {
-    const existing = await db.select().from(products).limit(1);
-    if (existing.length === 0) {
-      return seedProducts as unknown as (typeof products.$inferSelect)[];
-    }
     const allProducts = await db
       .select()
       .from(products)
