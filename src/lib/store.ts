@@ -1,3 +1,11 @@
+
+// Currency conversion — update this number whenever the USD/IQD exchange rate changes
+export const USD_TO_IQD = 1310;
+ 
+export function formatIQD(usdAmount: number): string {
+  return Math.round(usdAmount * USD_TO_IQD).toLocaleString("en-US");
+}
+ 
 // Store configuration
 export const STORE = {
   nameKu: "عارفان گۆڵد",
@@ -13,15 +21,16 @@ export const STORE = {
   hoursShort: "هەینی: ١٤:٠٠ - ٢١:٠٠",
   yearsExperience: "+٢٠",
 };
-
+ 
 export function whatsappUrl(customMessage?: string) {
   const msg = encodeURIComponent(customMessage ?? STORE.whatsappMessage);
   return `https://wa.me/${STORE.phoneIntl}?text=${msg}`;
 }
-
+ 
 export function productWhatsappUrl(productName?: string) {
   const msg = productName
     ? `سڵاو، دەمەوێت زانیاری زیاتر لەسەر "${productName}" بزانم.`
     : STORE.whatsappMessage;
   return whatsappUrl(msg);
 }
+ 
