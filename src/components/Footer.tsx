@@ -22,7 +22,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-white/60 leading-relaxed max-w-md mb-6">
-              دوکانی {STORE.nameKu} بۆ جوانترین زێر و زیو و ئەڵماس. زیاتر لە ٢٠ ساڵ لە خزمەتی ئێوە بە کوالێتی و دڵسۆزیەوە.
+              دوکانی {STORE.nameKu} بۆ جوانترین زێر و زیو و ئەڵماس. زیاتر لە ٥٠ ساڵ لە خزمەتی ئێوە بە کوالێتی و دڵسۆزیەوە.
             </p>
             <div className="flex gap-3">
               {[
