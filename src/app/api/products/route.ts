@@ -5,17 +5,8 @@ import { seedProducts } from "@/lib/seed-data";
 import { isAdmin } from "@/lib/auth";
 import { desc, eq } from "drizzle-orm";
 
-// Ensure DB is seeded
-async function ensureSeeded() {
-  const existing = await db.select().from(products).limit(1);
-  if (existing.length === 0) {
-    await db.insert(products).values(seedProducts).returning();
-  }
-}
-
 export async function GET(request: Request) {
   try {
-    await ensureSeeded();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const featured = searchParams.get("featured");
