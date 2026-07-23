@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Product } from "@/db/schema";
-import { STORE } from "@/lib/store";
+import { STORE, USD_TO_IQD } from "@/lib/store";
 
 const CATEGORIES = [
   { id: "ring", ku: "ئەڵقە" },
@@ -85,9 +85,9 @@ export default function AdminPanel({ initialProducts }: { initialProducts: Produ
       .then((data) => {
         const rates = data.rates || {};
         setGoldRates({
-          gold_rate_18: rates.gold_rate_18 ? String(rates.gold_rate_18) : "",
-          gold_rate_21: rates.gold_rate_21 ? String(rates.gold_rate_21) : "",
-          gold_rate_24: rates.gold_rate_24 ? String(rates.gold_rate_24) : "",
+          gold_rate_18: rates.gold_rate_18 ? String(Math.round(rates.gold_rate_18 * USD_TO_IQD)) : "",
+          gold_rate_21: rates.gold_rate_21 ? String(Math.round(rates.gold_rate_21 * USD_TO_IQD)) : "",
+          gold_rate_24: rates.gold_rate_24 ? String(Math.round(rates.gold_rate_24 * USD_TO_IQD)) : "",
         });
       })
       .catch(() => {});
@@ -97,10 +97,16 @@ export default function AdminPanel({ initialProducts }: { initialProducts: Produ
     e.preventDefault();
     setSavingRates(true);
     try {
+      // Rates are entered in IQD but stored internally in USD (product prices are USD-based).
+      const payload = {
+        gold_rate_18: goldRates.gold_rate_18 ? Number(goldRates.gold_rate_18) / USD_TO_IQD : "",
+        gold_rate_21: goldRates.gold_rate_21 ? Number(goldRates.gold_rate_21) / USD_TO_IQD : "",
+        gold_rate_24: goldRates.gold_rate_24 ? Number(goldRates.gold_rate_24) / USD_TO_IQD : "",
+      };
       const res = await fetch("/api/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(goldRates),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setMessage({ type: "success", text: "نرخی زێر نوێکرایەوە بۆ هەموو بەرهەمەکان" });
@@ -287,39 +293,39 @@ export default function AdminPanel({ initialProducts }: { initialProducts: Produ
         {/* Live Gold Rate Panel */}
         <div className="bg-white rounded-2xl shadow-lg border border-[#c9a961]/30 p-6 md:p-8 mb-8">
           <h2 className="text-xl font-display font-bold text-[#1a1410] mb-2 flex items-center gap-2">
-            <span className="gold-text">💰</span> نرخی ئەمڕۆی زێر بۆ گرام (دۆلار)
+            <span className="gold-text">💰</span> نرخی ئەمڕۆی زێر بۆ گرام (دینار)
           </h2>
           <p className="text-sm text-[#2a2119]/60 mb-5">
             ئەم نرخانە بە شێوەیەکی خۆکار بۆ هەموو ئەو بەرهەمانە بەکاردێت کە هەمان عەیاریان هەیە. تەنها ئەمانە نوێ بکەرەوە هەموو ڕۆژێک بەپێی نرخی بازاڕ.
           </p>
           <form onSubmit={handleSaveRates} className="grid sm:grid-cols-3 gap-4">
-            <Field label="١٨ عەیار">
+            <Field label="١٨ عەیار (دینار)">
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 value={goldRates.gold_rate_18}
                 onChange={(e) => setGoldRates((r) => ({ ...r, gold_rate_18: e.target.value }))}
-                placeholder="بۆ نموونە 80.00"
+                placeholder="بۆ نموونە 105000"
                 className="w-full px-4 py-2.5 rounded-xl border border-[#c9a961]/30 focus:border-[#c9a961] outline-none"
               />
             </Field>
-            <Field label="٢١ عەیار">
+            <Field label="٢١ عەیار (دینار)">
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 value={goldRates.gold_rate_21}
                 onChange={(e) => setGoldRates((r) => ({ ...r, gold_rate_21: e.target.value }))}
-                placeholder="بۆ نموونە 92.00"
+                placeholder="بۆ نموونە 120500"
                 className="w-full px-4 py-2.5 rounded-xl border border-[#c9a961]/30 focus:border-[#c9a961] outline-none"
               />
             </Field>
-            <Field label="٢٤ عەیار">
+            <Field label="٢٤ عەیار (دینار)">
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 value={goldRates.gold_rate_24}
                 onChange={(e) => setGoldRates((r) => ({ ...r, gold_rate_24: e.target.value }))}
-                placeholder="بۆ نموونە 110.00"
+                placeholder="بۆ نموونە 144100"
                 className="w-full px-4 py-2.5 rounded-xl border border-[#c9a961]/30 focus:border-[#c9a961] outline-none"
               />
             </Field>
