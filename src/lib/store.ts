@@ -1,5 +1,5 @@
 // Currency conversion — update this number whenever the USD/IQD exchange rate changes
-export const USD_TO_IQD = 1310;
+export const USD_TO_IQD = 1500;
 
 export function formatIQD(usdAmount: number): string {
   return Math.round(usdAmount * USD_TO_IQD).toLocaleString("en-US");
