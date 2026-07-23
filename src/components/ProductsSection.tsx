@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import type { Product } from "@/db/schema";
-import { productWhatsappUrl } from "@/lib/store";
+import { productWhatsappUrl, formatIQD } from "@/lib/store";
 
 const materialLabels: Record<string, { ku: string; color: string }> = {
   gold18: { ku: "زێری ١٨ عەیار", color: "bg-amber-100 text-amber-800" },
@@ -252,11 +252,11 @@ export default function ProductsSection({
                                 )}
                               </div>
                               <div className="text-left">
-                                <div className="gold-text font-extrabold text-xl font-display leading-none">
-                                  ${b.total.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                                <div className="gold-text font-extrabold text-lg font-display leading-none" dir="ltr">
+                                  {formatIQD(b.total)} <span className="text-xs">د.ع</span>
                                 </div>
-                                <div className="text-[9px] text-[#2a2119]/50 mt-0.5">
-                                  بە دۆلار
+                                <div className="text-[9px] text-[#2a2119]/50 mt-0.5" dir="ltr">
+                                  ≈ ${b.total.toLocaleString("en-US", { maximumFractionDigits: 0 })}
                                 </div>
                               </div>
                             </div>
@@ -402,11 +402,16 @@ export default function ProductsSection({
                             <div>
                               <div className="text-xs opacity-80">نرخی کۆتایی مەزەندەکراو</div>
                               <div className="text-[10px] opacity-70 mt-0.5">
-                                بە دۆلار • بە نرخی ئەمڕۆ
+                                بە نرخی ئەمڕۆ
                               </div>
                             </div>
-                            <div className="text-3xl font-extrabold font-display leading-none" dir="ltr">
-                              ${b.total.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                            <div className="text-left">
+                              <div className="text-2xl font-extrabold font-display leading-none" dir="ltr">
+                                {formatIQD(b.total)} <span className="text-sm">د.ع</span>
+                              </div>
+                              <div className="text-[10px] opacity-70 mt-1" dir="ltr">
+                                ≈ ${b.total.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                              </div>
                             </div>
                           </div>
                         </div>
