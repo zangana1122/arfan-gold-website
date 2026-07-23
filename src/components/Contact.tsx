@@ -109,8 +109,12 @@ export default function Contact() {
                     <div className="text-sm text-white/60 mb-1">کاتی کرانەوە</div>
                     <div className="font-medium">
                       {STORE.hours}
-                      <br />
-                      {STORE.hoursShort}
+                      {STORE.hoursShort && (
+                        <>
+                          <br />
+                          {STORE.hoursShort}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
